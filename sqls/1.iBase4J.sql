@@ -17,18 +17,6 @@ DROP DATABASE IF EXISTS `ibase4j`;
 CREATE DATABASE IF NOT EXISTS `ibase4j` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `ibase4j`;
 
--- 导出  表 ibase4j.qrtz_cron_triggers 结构
-DROP TABLE IF EXISTS `qrtz_cron_triggers`;
-CREATE TABLE IF NOT EXISTS `qrtz_cron_triggers` (
-  `SCHED_NAME` varchar(120) NOT NULL,
-  `TRIGGER_NAME` varchar(200) NOT NULL,
-  `TRIGGER_GROUP` varchar(200) NOT NULL,
-  `CRON_EXPRESSION` varchar(200) NOT NULL,
-  `TIME_ZONE_ID` varchar(80) DEFAULT NULL,
-  PRIMARY KEY (`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`),
-  CONSTRAINT `qrtz_cron_triggers_ibfk_1` FOREIGN KEY (`SCHED_NAME`, `TRIGGER_NAME`, `TRIGGER_GROUP`) REFERENCES `qrtz_triggers` (`SCHED_NAME`, `TRIGGER_NAME`, `TRIGGER_GROUP`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 -- 导出  表 ibase4j.qrtz_fired_triggers 结构
 DROP TABLE IF EXISTS `qrtz_fired_triggers`;
 CREATE TABLE IF NOT EXISTS `qrtz_fired_triggers` (
@@ -47,7 +35,6 @@ CREATE TABLE IF NOT EXISTS `qrtz_fired_triggers` (
   `REQUESTS_RECOVERY` varchar(1) DEFAULT NULL,
   PRIMARY KEY (`SCHED_NAME`,`ENTRY_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 -- 导出  表 ibase4j.qrtz_job_details 结构
 DROP TABLE IF EXISTS `qrtz_job_details`;
@@ -149,6 +136,18 @@ CREATE TABLE IF NOT EXISTS `qrtz_triggers` (
   CONSTRAINT `qrtz_triggers_ibfk_1` FOREIGN KEY (`SCHED_NAME`, `JOB_NAME`, `JOB_GROUP`) REFERENCES `qrtz_job_details` (`SCHED_NAME`, `JOB_NAME`, `JOB_GROUP`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- 导出  表 ibase4j.qrtz_cron_triggers 结构
+DROP TABLE IF EXISTS `qrtz_cron_triggers`;
+CREATE TABLE IF NOT EXISTS `qrtz_cron_triggers` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `TRIGGER_NAME` varchar(200) NOT NULL,
+  `TRIGGER_GROUP` varchar(200) NOT NULL,
+  `CRON_EXPRESSION` varchar(200) NOT NULL,
+  `TIME_ZONE_ID` varchar(80) DEFAULT NULL,
+  PRIMARY KEY (`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`),
+  CONSTRAINT `qrtz_cron_triggers_ibfk_1` FOREIGN KEY (`SCHED_NAME`, `TRIGGER_NAME`, `TRIGGER_GROUP`) REFERENCES `qrtz_triggers` (`SCHED_NAME`, `TRIGGER_NAME`, `TRIGGER_GROUP`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- 导出  表 ibase4j.sys_dept 结构
 DROP TABLE IF EXISTS `sys_dept`;
 CREATE TABLE IF NOT EXISTS `sys_dept` (
@@ -160,10 +159,10 @@ CREATE TABLE IF NOT EXISTS `sys_dept` (
   `leaf_` int(1) DEFAULT NULL COMMENT '叶子节点(0:树枝节点;1:叶子节点)',
   `enable_` tinyint(1) DEFAULT NULL COMMENT '启用状态',
   `remark_` varchar(1024) DEFAULT NULL COMMENT '备注',
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='部门';
 
@@ -186,10 +185,10 @@ CREATE TABLE IF NOT EXISTS `sys_dic` (
   `editable_` tinyint(1) NOT NULL DEFAULT '1',
   `enable_` tinyint(1) NOT NULL DEFAULT '1',
   `remark_` varchar(500) DEFAULT NULL,
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`),
   UNIQUE KEY `field_id_code` (`type_`,`code_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据字典明细表';
@@ -252,10 +251,10 @@ CREATE TABLE IF NOT EXISTS `sys_email` (
   `email_content` text NOT NULL COMMENT '发送内容',
   `remark_` varchar(1024) DEFAULT NULL,
   `enable_` tinyint(1) NOT NULL DEFAULT '1',
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='邮件表';
 
@@ -277,10 +276,10 @@ CREATE TABLE IF NOT EXISTS `sys_email_config` (
   `sender_password` varchar(32) NOT NULL COMMENT '发邮件邮箱密码',
   `remark_` varchar(1024) DEFAULT NULL,
   `enable_` tinyint(1) NOT NULL DEFAULT '1',
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='邮件配置表';
 
@@ -301,10 +300,10 @@ CREATE TABLE IF NOT EXISTS `sys_email_template` (
   `template_` text COMMENT '内容模板',
   `remark_` varchar(1024) DEFAULT NULL,
   `enable_` tinyint(1) NOT NULL DEFAULT '1',
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='邮件模版表';
 
@@ -326,9 +325,9 @@ CREATE TABLE IF NOT EXISTS `sys_event` (
   `enable_` tinyint(1) DEFAULT NULL,
   `remark_` text,
   `create_by` bigint(20) NULL,
-  `create_time` datetime NOT NULL,
+  `create_time` datetime DEFAULT NULL,
   `update_by` bigint(20) NULL,
-  `update_time` datetime NOT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='操作日志表';
 
@@ -351,10 +350,10 @@ CREATE TABLE IF NOT EXISTS `sys_menu` (
   `permission_` varchar(50) DEFAULT NULL COMMENT '权限标识',
   `remark_` varchar(1024) DEFAULT NULL COMMENT '备注',
   `enable_` tinyint(1) DEFAULT '1',
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单';
 
@@ -374,10 +373,10 @@ CREATE TABLE IF NOT EXISTS `sys_news` (
   `status_` varchar(2) NOT NULL DEFAULT '1' COMMENT '发布状态',
   `remark_` varchar(1024) DEFAULT NULL,
   `enable_` tinyint(1) NOT NULL DEFAULT '1',
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='新闻表';
 
@@ -399,10 +398,10 @@ CREATE TABLE IF NOT EXISTS `sys_notice` (
   `status_` varchar(2) NOT NULL DEFAULT '1' COMMENT '发布状态',
   `remark_` varchar(1024) DEFAULT NULL,
   `enable_` tinyint(1) NOT NULL DEFAULT '1',
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='通知公告表';
 
@@ -418,10 +417,10 @@ CREATE TABLE IF NOT EXISTS `sys_param` (
   `param_value` varchar(100) DEFAULT NULL COMMENT '参数键值',
   `remark_` varchar(1024) DEFAULT NULL COMMENT '备注',
   `enable_` tinyint(1) DEFAULT '1',
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='全局参数表';
 
@@ -438,10 +437,10 @@ CREATE TABLE IF NOT EXISTS `sys_role` (
   `role_type` int(1) NOT NULL DEFAULT '1' COMMENT '角色类型(1:业务角色;2:管理角色 ;3:系统内置角色)',
   `enable_` tinyint(1) NOT NULL DEFAULT '1',
   `remark_` varchar(1024) DEFAULT NULL COMMENT '备注',
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色信息表';
 
@@ -460,86 +459,13 @@ CREATE TABLE IF NOT EXISTS `sys_role_menu` (
   `permission_` varchar(50) NOT NULL COMMENT '权限标识',
   `enable_` tinyint(1) NOT NULL DEFAULT '1',
   `remark_` varchar(1024) DEFAULT NULL,
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`),
   UNIQUE KEY `sys_role_menu_key1` (`role_id`,`menu_id`,`permission_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色授权表';
-
--- 正在导出表  ibase4j.sys_role_menu 的数据：~68 rows (大约)
-/*!40000 ALTER TABLE `sys_role_menu` DISABLE KEYS */;
-INSERT INTO `sys_role_menu` (`id_`, `role_id`, `menu_id`, `permission_`, `enable_`, `remark_`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES
-	(4, 1, 4, 'add', 1, NULL, 1, '2016-06-29 09:12:14', 1, '2016-06-29 09:12:14'),
-	(5, 1, 4, 'delete', 1, NULL, 1, '2016-06-29 09:18:43', 1, '2016-06-29 09:18:43'),
-	(7, 1, 4, 'update', 1, NULL, 1, '2016-06-29 09:18:33', 1, '2016-06-29 09:18:33'),
-	(8, 1, 5, 'add', 1, NULL, 1, '2016-06-29 09:19:00', 1, '2016-06-29 09:19:00'),
-	(9, 1, 5, 'delete', 1, NULL, 1, '2016-06-29 09:19:24', 1, '2016-06-29 09:19:24'),
-	(11, 1, 5, 'update', 1, NULL, 1, '2016-06-29 09:19:10', 1, '2016-06-29 09:19:10'),
-	(12, 1, 6, 'add', 1, NULL, 1, '2016-06-29 09:19:35', 1, '2016-06-29 09:19:35'),
-	(13, 1, 6, 'delete', 1, NULL, 1, '2016-06-29 09:19:35', 1, '2016-06-29 09:19:35'),
-	(15, 1, 6, 'update', 1, NULL, 1, '2016-06-29 09:19:35', 1, '2016-06-29 09:19:35'),
-	(16, 1, 7, 'add', 1, NULL, 1, '2016-06-29 09:19:58', 1, '2016-06-29 09:19:58'),
-	(17, 1, 7, 'delete', 1, NULL, 1, '2016-06-29 09:20:18', 1, '2016-06-29 09:20:18'),
-	(19, 1, 7, 'update', 1, NULL, 1, '2016-06-29 09:20:08', 1, '2016-06-29 09:20:08'),
-	(20, 1, 8, 'add', 1, NULL, 1, '2016-06-29 09:20:34', 1, '2016-06-29 09:20:34'),
-	(21, 1, 8, 'delete', 1, NULL, 1, '2016-06-29 09:20:53', 1, '2016-06-29 09:20:53'),
-	(23, 1, 8, 'update', 1, NULL, 1, '2016-06-29 09:20:44', 1, '2016-06-29 09:20:44'),
-	(24, 1, 9, 'add', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:11'),
-	(25, 1, 9, 'delete', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:11'),
-	(27, 1, 9, 'update', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:11'),
-	(29, 1, 11, 'add', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:11'),
-	(30, 1, 11, 'delete', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:11'),
-	(32, 1, 11, 'update', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:11'),
-	(35, 1, 14, 'update', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:43:18'),
-	(37, 1, 15, 'update', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:43:33'),
-	(39, 1, 16, 'update', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:43:34'),
-	(41, 1, 17, 'update', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:43:35'),
-	(42, 1, 18, 'update', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:43:35'),
-	(43, 1, 19, 'update', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:43:35'),
-	(45, 1, 22, 'update', 1, NULL, 0, '2016-06-28 18:18:50', 0, '2016-06-28 18:18:50'),
-	(47, 1, 23, 'update', 1, NULL, 0, '2016-06-28 18:18:50', 0, '2016-06-28 18:18:50'),
-	(49, 1, 25, 'close', 1, NULL, 1, '2016-06-29 08:45:21', 1, '2016-06-29 08:45:21'),
-	(50, 1, 25, 'open', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:13'),
-	(52, 1, 25, 'run', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:13'),
-	(53, 1, 25, 'update', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:13'),
-	(56, 1, 28, 'add', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-28 18:18:50'),
-	(57, 1, 28, 'delete', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-28 18:18:50'),
-	(59, 1, 28, 'update', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:13'),
-	(60, 1, 29, 'add', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:13'),
-	(61, 1, 29, 'delete', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:13'),
-	(63, 1, 29, 'update', 1, NULL, 1, '2016-06-28 18:18:50', 1, '2016-06-29 08:23:13'),
-	(827767024342073344, 1, 1, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024354656256, 1, 2, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024358850560, 1, 3, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024379822080, 1, 4, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024396599296, 1, 5, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024417570816, 1, 6, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024425959424, 1, 7, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024434348032, 1, 8, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024446930944, 1, 9, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024463708160, 1, 10, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024480485376, 1, 11, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024488873984, 1, 12, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024497262592, 1, 13, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024505651200, 1, 14, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024522428416, 1, 15, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024547594240, 1, 16, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024555982848, 1, 17, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024602120192, 1, 18, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024623091712, 1, 19, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024631480320, 1, 20, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024644063232, 1, 21, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024665034752, 1, 22, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024686006272, 1, 23, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024702783488, 1, 24, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024719560704, 1, 25, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024736337920, 1, 26, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024748920832, 1, 27, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024769892352, 1, 28, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32'),
-	(827767024774086656, 1, 29, 'read', 1, NULL, 1, '2017-02-04 14:33:32', 1, '2017-02-04 14:33:32');
-/*!40000 ALTER TABLE `sys_role_menu` ENABLE KEYS */;
 
 -- 导出  表 ibase4j.sys_session 结构
 DROP TABLE IF EXISTS `sys_session`;
@@ -551,9 +477,9 @@ CREATE TABLE IF NOT EXISTS `sys_session` (
   `start_time` datetime NOT NULL,
   `enable_` tinyint(1) DEFAULT NULL,
   `remark_` varchar(1024) DEFAULT NULL,
-  `create_time` datetime NOT NULL,
+  `create_time` datetime DEFAULT NULL,
   `create_by` bigint(20) DEFAULT NULL,
-  `update_time` datetime NOT NULL,
+  `update_time` datetime DEFAULT NULL,
   `update_by` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='会话管理';
@@ -569,10 +495,10 @@ CREATE TABLE IF NOT EXISTS `sys_unit` (
   `sort_` int(5) DEFAULT NULL COMMENT '排序号',
   `enable_` tinyint(1) DEFAULT NULL COMMENT '启用状态',
   `remark_` varchar(1024) DEFAULT NULL,
-  `create_time` datetime NOT NULL,
-  `create_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL,
-  `update_by` bigint(20) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `create_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='单位表';
 
@@ -603,10 +529,10 @@ CREATE TABLE IF NOT EXISTS `sys_user` (
   `locked_` tinyint(1) DEFAULT '0' COMMENT '锁定标志(1:锁定;0:激活)',
   `enable_` tinyint(1) DEFAULT '1',
   `remark_` varchar(1024) DEFAULT NULL,
-  `create_time` datetime NOT NULL,
-  `create_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL,
-  `update_by` bigint(20) NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `create_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id_`),
   UNIQUE KEY `account` (`account_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户管理';
@@ -627,10 +553,10 @@ CREATE TABLE IF NOT EXISTS `sys_user_menu` (
   `permission_` varchar(50) NOT NULL COMMENT '权限标识',
   `enable_` tinyint(1) NOT NULL DEFAULT '1',
   `remark_` varchar(1024) DEFAULT NULL,
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`),
   UNIQUE KEY `sys_user_menu_key1` (`user_id`,`menu_id`,`permission_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户授权表';
@@ -647,10 +573,10 @@ CREATE TABLE IF NOT EXISTS `sys_user_role` (
   `role_id` bigint(20) NOT NULL,
   `enable_` tinyint(1) NOT NULL DEFAULT '1',
   `remark_` varchar(1024) DEFAULT NULL,
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`),
   UNIQUE KEY `user_id_role_id` (`user_id`,`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户授权表';
@@ -670,10 +596,10 @@ CREATE TABLE IF NOT EXISTS `sys_user_thirdparty` (
   `open_id` varchar(50) NOT NULL COMMENT '第三方Id',
   `enable_` tinyint(1) DEFAULT NULL,
   `remark_` varchar(1024) DEFAULT NULL,
-  `create_by` bigint(20) NOT NULL,
-  `create_time` datetime NOT NULL,
-  `update_by` bigint(20) NOT NULL,
-  `update_time` datetime NOT NULL,
+  `create_by` bigint(20) DEFAULT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_by` bigint(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id_`),
   UNIQUE KEY `user_id_provider__open_id` (`user_id`,`provider_`,`open_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='第三方用户';

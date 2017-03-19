@@ -3,12 +3,12 @@ package org.ibase4j.service;
 import java.util.List;
 import java.util.Map;
 
-import org.ibase4j.core.util.DataUtil;
 import org.ibase4j.core.util.InstanceUtil;
 import org.ibase4j.mapper.SysAuthorizeMapper;
 import org.ibase4j.mapper.SysRoleMenuMapper;
 import org.ibase4j.mapper.SysUserMenuMapper;
 import org.ibase4j.mapper.SysUserRoleMapper;
+import org.ibase4j.model.SysDic;
 import org.ibase4j.model.SysMenu;
 import org.ibase4j.model.SysRoleMenu;
 import org.ibase4j.model.SysUserMenu;
@@ -40,13 +40,20 @@ public class SysAuthorizeService {
 	private SysAuthorizeMapper sysAuthorizeMapper;
 	@Autowired
 	private SysMenuService sysMenuService;
+	@Autowired
+	private SysDicService sysDicService;
 
-	public List<Long> queryMenuIdsByUserId(Long userId) {
-		return sysUserMenuMapper.queryMenuIdsByUserId(userId);
+	public List<String> queryMenuIdsByUserId(Long userId) {
+		List<String> resultList = InstanceUtil.newArrayList();
+		List<Long> list = sysUserMenuMapper.queryMenuIdsByUserId(userId);
+		for (Long id : list) {
+			resultList.add(id.toString());
+		}
+		return resultList;
 	}
 
 	@Transactional
-	@CacheEvict(value = { "getAuthorize", "sysPermission", "userPermission" }, allEntries = true)
+	@CacheEvict(value = { "menuPermission", "sysPermission", "userPermission" }, allEntries = true)
 	public void updateUserMenu(List<SysUserMenu> sysUserMenus) {
 		Long userId = null;
 		for (SysUserMenu sysUserMenu : sysUserMenus) {
@@ -66,18 +73,23 @@ public class SysAuthorizeService {
 	}
 
 	@Transactional
-	@CacheEvict(value = { "getAuthorize", "sysPermission", "userPermission" }, allEntries = true)
+	@CacheEvict(value = { "menuPermission", "sysPermission", "userPermission" }, allEntries = true)
 	public void updateUserPermission(List<SysUserMenu> sysUserMenus) {
 		Long userId = null;
-		String permission = null;
 		for (SysUserMenu sysUserMenu : sysUserMenus) {
-			if (sysUserMenu.getUserId() != null && !"read".equals(sysUserMenu.getPermission())) {
+			if (sysUserMenu.getUserId() != null) {
 				userId = sysUserMenu.getUserId();
-				permission = sysUserMenu.getPermission();
 			}
 		}
-		if (userId != null && DataUtil.isNotEmpty(permission)) {
-			sysAuthorizeMapper.deleteUserMenu(userId, permission);
+		if (userId != null) {
+			Map<String, Object> dicParam = InstanceUtil.newHashMap();
+			dicParam.put("type", "CRUD");
+			List<SysDic> sysDics = sysDicService.queryList(dicParam);
+			for (SysDic sysDic : sysDics) {
+				if (!"read".equals(sysDic.getCode())) {
+					sysAuthorizeMapper.deleteUserMenu(userId, sysDic.getCode());
+				}
+			}
 		}
 		for (SysUserMenu sysUserMenu : sysUserMenus) {
 			if (sysUserMenu.getUserId() != null && sysUserMenu.getMenuId() != null
@@ -95,7 +107,7 @@ public class SysAuthorizeService {
 	}
 
 	@Transactional
-	@CacheEvict(value = { "getAuthorize", "sysPermission", "userPermission", "rolePermission" }, allEntries = true)
+	@CacheEvict(value = { "menuPermission", "sysPermission", "userPermission", "rolePermission" }, allEntries = true)
 	public void updateUserRole(List<SysUserRole> sysUserRoles) {
 		Long userId = null;
 		for (SysUserRole sysUserRole : sysUserRoles) {
@@ -114,12 +126,17 @@ public class SysAuthorizeService {
 		}
 	}
 
-	public List<Long> queryMenuIdsByRoleId(Long roleId) {
-		return sysRoleMenuMapper.queryMenuIdsByRoleId(roleId);
+	public List<String> queryMenuIdsByRoleId(Long roleId) {
+		List<String> resultList = InstanceUtil.newArrayList();
+		List<Long> list = sysRoleMenuMapper.queryMenuIdsByRoleId(roleId);
+		for (Long id : list) {
+			resultList.add(id.toString());
+		}
+		return resultList;
 	}
 
 	@Transactional
-	@CacheEvict(value = { "getAuthorize", "sysPermission", "userPermission", "rolePermission" }, allEntries = true)
+	@CacheEvict(value = { "menuPermission", "sysPermission", "userPermission", "rolePermission" }, allEntries = true)
 	public void updateRoleMenu(List<SysRoleMenu> sysRoleMenus) {
 		Long roleId = null;
 		for (SysRoleMenu sysRoleMenu : sysRoleMenus) {
@@ -140,19 +157,23 @@ public class SysAuthorizeService {
 	}
 
 	@Transactional
-	@CacheEvict(value = { "getAuthorize", "sysPermission", "userPermission", "rolePermission" }, allEntries = true)
+	@CacheEvict(value = { "menuPermission", "sysPermission", "userPermission", "rolePermission" }, allEntries = true)
 	public void updateRolePermission(List<SysRoleMenu> sysRoleMenus) {
 		Long roleId = null;
-		String permission = null;
 		for (SysRoleMenu sysRoleMenu : sysRoleMenus) {
-			if (sysRoleMenu.getRoleId() != null && !"read".equals(sysRoleMenu.getPermission())) {
+			if (sysRoleMenu.getRoleId() != null) {
 				roleId = sysRoleMenu.getRoleId();
-				permission = sysRoleMenu.getPermission();
-				break;
 			}
 		}
-		if (roleId != null && DataUtil.isNotEmpty(permission)) {
-			sysAuthorizeMapper.deleteRoleMenu(roleId, permission);
+		if (roleId != null) {
+			Map<String, Object> dicParam = InstanceUtil.newHashMap();
+			dicParam.put("type", "CRUD");
+			List<SysDic> sysDics = sysDicService.queryList(dicParam);
+			for (SysDic sysDic : sysDics) {
+				if (!"read".equals(sysDic.getCode())) {
+					sysAuthorizeMapper.deleteRoleMenu(roleId, sysDic.getCode());
+				}
+			}
 		}
 		for (SysRoleMenu sysRoleMenu : sysRoleMenus) {
 			if (sysRoleMenu.getRoleId() != null && sysRoleMenu.getMenuId() != null
@@ -162,7 +183,7 @@ public class SysAuthorizeService {
 		}
 	}
 
-	@Cacheable(value = "getAuthorize")
+	@Cacheable(value = "menuPermission")
 	public List<SysMenu> queryAuthorizeByUserId(Long userId) {
 		List<Long> menuIds = sysAuthorizeMapper.getAuthorize(userId);
 		List<SysMenu> menus = sysMenuService.getList(menuIds);
@@ -176,7 +197,7 @@ public class SysAuthorizeService {
 		}
 		List<SysMenu> result = InstanceUtil.newArrayList();
 		for (SysMenu sysMenu : menus) {
-			if (sysMenu.getParentId() == 0) {
+			if (sysMenu.getParentId() == null || sysMenu.getParentId() == 0) {
 				sysMenu.setLeaf(0);
 				sysMenu.setMenuBeans(getChildMenu(map, sysMenu.getId()));
 				result.add(sysMenu);
@@ -215,11 +236,13 @@ public class SysAuthorizeService {
 		return sysAuthorizeMapper.queryMenusPermission();
 	}
 
-	public List<Long> queryUserPermissions(SysUserMenu sysUserMenu) {
-		return sysUserMenuMapper.queryPermissions(sysUserMenu.getUserId(), sysUserMenu.getPermission());
+	public List<Map<String, Object>> queryUserPermissions(SysUserMenu sysUserMenu) {
+		List<Map<String, Object>> list = sysUserMenuMapper.queryPermissions(sysUserMenu.getUserId());
+		return list;
 	}
 
-	public List<Long> queryRolePermissions(SysRoleMenu sysRoleMenu) {
-		return sysRoleMenuMapper.queryPermissions(sysRoleMenu.getRoleId(), sysRoleMenu.getPermission());
+	public List<Map<String, Object>> queryRolePermissions(SysRoleMenu sysRoleMenu) {
+		List<Map<String, Object>> list = sysRoleMenuMapper.queryPermissions(sysRoleMenu.getRoleId());
+		return list;
 	}
 }
